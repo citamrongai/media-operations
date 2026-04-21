@@ -1,0 +1,27 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    background-color: #f4f0f0;
+}
+
+.header {
+    background-color: #c40b0b;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.instructions {
+    background-color: #f0eaea;
+    color: red;
+    padding: 30px;
+    margin: 20px auto;
+    max-width: 800px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyWorship Formatter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <section>
+        <div class="header">
+            <h1>Citam Rongai Lyrics Formatter</h1>
+        </div>
+    </section>
+    <section>
+        <div class="instructions">
+            <p>Welcome to the Lyrics Formatter for Citam Rongai! This tool is designed to help you format your song lyrics for EasyWorship. Simply paste your raw lyrics into the input box, and click the "Format for EasyWorship" button to split them into
+                4-line slides. You can then copy the formatted lyrics to your clipboard for easy pasting into EasyWorship.</p>
+        </div>
+    </section>
+    <div class="container">
+        <h1>Lyrics Formatter for Citam Rongai</h1>
+        <p>Paste the Lyrics below to split them into 4-line slides.</p>
+
+        <textarea id="InputLyrics" placeholder="Paste raw lyrics here..."></textarea>
+
+        <div class="controls">
+            <button onclick="FormatLyrics()">Format for EasyWorship</button>
+            <button onclick="copyToClipboard()" class="secondary">Copy Results</button>
+        </div>
+
+        <textarea id="outputLyrics" readonly placeholder="Formatted Lyrics will appear here...."></textarea>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
