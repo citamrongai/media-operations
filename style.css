@@ -331,6 +331,31 @@ button {
     border-color: var(--neon-red);
 }
 
+/* --- WhatsApp Button --- */
+.btn-whatsapp {
+    background: #25D366;
+    color: white;
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.5);
+}
+
+.btn-whatsapp:hover {
+    background: #1ebe5d;
+}
+
+.btn-whatsapp i {
+    margin-right: 8px;
+    font-size: 1.2rem;
+}
+
+/* --- Warning -- */
+#warningBanner {
+    background: rgba(255, 0, 60, 0.1);
+    border: 1px solid #ff003c;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+
 /* --- Footers --- */
 .info-footer {
     display: flex;
@@ -371,4 +396,4 @@ button {
     button {
         width: 100%;
     }
-}
+}

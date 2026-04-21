@@ -40,6 +40,9 @@ function FormatLyrics() {
     
     // Auto-scroll to output for better UX
     document.getElementById('outputLyrics').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Update character counter
+    updateCharCounter();
 }
 
 function copyToClipboard() {
@@ -66,4 +69,46 @@ function copyToClipboard() {
     } catch (err) {
         console.error('Failed to copy: ', err);
     }
-}
+}
+
+function shareToWhatsApp() {
+    const outputField = document.getElementById('outputLyrics');
+    if (!outputField.value) return;
+
+    const lyrics = outputField.value;
+
+    // ✅ Step 1: Check length before anything else
+    if (lyrics.length > 65000) {
+        document.getElementById('warningBanner').style.display = 'block';
+        return; // Stop execution if too long
+    }
+
+    // ✅ Step 2: Copy to clipboard (optional)
+    navigator.clipboard.writeText(lyrics).catch(err => {
+        console.error('Clipboard copy failed: ', err);
+    });
+
+    // ✅ Step 3: Encode and open WhatsApp
+    const encodedLyrics = encodeURIComponent(lyrics);
+    const whatsappUrl = `https://wa.me/?text=${encodedLyrics}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+function updateCharCounter() {
+    const outputField = document.getElementById('outputLyrics');
+    const counter = document.getElementById('charCounter');
+    const warning = document.getElementById('warningBanner');
+
+    const length = outputField.value.length;
+    counter.innerText = `Characters: ${length} / 65,000`;
+
+    // Show warning if exceeded
+    if (length > 65000) {
+        warning.style.display = 'block';
+        counter.style.color = '#ff003c';
+    } else {
+        warning.style.display = 'none';
+        counter.style.color = '#b3b3b3';
+    }
+}
+
