@@ -73,25 +73,26 @@ function copyToClipboard() {
 
 function shareToWhatsApp() {
     const outputField = document.getElementById('outputLyrics');
-    if (!outputField.value) return;
+    if (!outputField.value.trim()) return;
 
     const lyrics = outputField.value;
 
-    // ✅ Step 1: Check length before anything else
+    // 1. Check length
     if (lyrics.length > 65000) {
         document.getElementById('warningBanner').style.display = 'block';
-        return; // Stop execution if too long
+        return;
     }
 
-    // ✅ Step 2: Copy to clipboard (optional)
-    navigator.clipboard.writeText(lyrics).catch(err => {
-        console.error('Clipboard copy failed: ', err);
-    });
-
-    // ✅ Step 3: Encode and open WhatsApp
+    // 2. Prepare the URL
     const encodedLyrics = encodeURIComponent(lyrics);
-    const whatsappUrl = `https://wa.me/?text=${encodedLyrics}`;
-    window.open(whatsappUrl, '_blank');
+    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedLyrics}`;
+
+    // 3. IMPLEMENT THE POPUP CHECK HERE
+    const newWindow = window.open(whatsappUrl, '_blank');
+    
+    if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+        alert("Popup blocked! Please allow popups for this site or manually copy the lyrics.");
+    }
 }
 
 function updateCharCounter() {
