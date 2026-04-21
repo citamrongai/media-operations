@@ -17,11 +17,91 @@ body {
 }
 
 .instructions {
-    background-color: #f0eaea;
-    color: red;
+    background-color: rgb(240, 234, 234);
+    color: #333333;
     padding: 30px;
     margin: 20px auto;
     max-width: 800px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px auto;
+    max-width: 800px;
+    color: #333333;
+    background-color: rgb(240, 234, 234);
+}
+
+.controls {
+    margin: 20px 0;
+    display: flex;
+    gap: 100px;
+}
+
+#InputLyrics {
+    border-color: #c40b0b;
+}
+
+textarea {
+    width: 100%;
+    height: 250px;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    resize: vertical;
+}
+
+button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+button:not(secondary) {
+    background-color: #c40b0b;
+    color: white;
+}
+
+button:not(secondary):hover {
+    background-color: #a00a0a;
+}
+
+.secondary {
+    background-color: #333333;
+    color: white;
+}
+
+.secondary:hover {
+    background-color: #555555;
+}
+
+.footer {
+    background-color: #333333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: 20px;
+}
+
+.purpose {
+    background-color: #c40b0b;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: 20px;
+}
+
+.note {
+    font-weight: bold;
+    color: #a26b6b;
 }
