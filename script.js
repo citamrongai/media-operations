@@ -1,57 +1,69 @@
+document.addEventListener('DOMContentLoaded', () => {
+    // Simulate initial loading delay to show skeleton UI
+    setTimeout(() => {
+        const skeleton = document.getElementById('skeleton-screen');
+        const content = document.getElementById('app-content');
+        
+        if (skeleton && content) {
+            skeleton.style.opacity = '0';
+            setTimeout(() => {
+                skeleton.style.display = 'none';
+                content.style.visibility = 'visible';
+                content.style.opacity = '1';
+                content.style.transform = 'translateY(0)';
+            }, 500);
+        }
+    }, 1500);
+});
+
 function FormatLyrics() {
     const lyricsInput = document.getElementById('InputLyrics').value;
+    if (!lyricsInput.trim()) return;
     
-    // 1. Split into lines
-    let lines = lyricsInput.split('\n');
-
-    // 2. The Purifier: Remove labels and numbers
-    const cleanLines = lines
-        .map(line => line.trim())
-        .filter(line => {
-            // Updated Regex:
-            // 1. isLabel: catches "Verse", "Verse 1", "Chorus:", "1. Chorus", etc.
-            const isLabel = /^(Chorus|Verse|Refrain|Bridge|Pre-Chorus|Intro|Outro|Ref|Cho)(\s*\d+[:.]?)?[:.]?$/i.test(line);
-            
-            // 2. isNumber: catches "1", "1.", or "1:" 
-            const isNumber = /^(\d+[:.]?)$/.test(line);
-
-            const isBracketed = /^\[.*\]$/.test(line); // catches lines like "[Chorus]" or "[Verse 1]"
-            
-            const isEmpty = line === '';
-            
-            const isWord = /^(Chorus|Verse|Refrain|Bridge|Pre-Chorus|Intro|Outro|Ref|Cho)$/i.test(line);
-
-            return !isLabel && !isNumber && !isEmpty && !isBracketed;
-        });
+    // Split by lines, trim whitespace, and filter out empty lines
+    const lines = lyricsInput.split('\n')
+                             .map(line => line.trim())
+                             .filter(line => line !== '');
     
     let output = [];
 
-    // 3. Format into 4-line blocks
-    for (let i = 0; i < cleanLines.length; i++) {
-        output.push(cleanLines[i]);
+    for (let i = 0; i < lines.length; i++) {
+        output.push(lines[i]);
         
-        if ((i + 1) % 4 === 0 && (i + 1) < cleanLines.length) {
+        // Add a blank line every 4 lines to split into slides, but not after the very last line
+        if ((i + 1) % 4 === 0 && (i + 1) < lines.length) {
             output.push('');
         }
     }
     
     document.getElementById('outputLyrics').value = output.join('\n');
+    
+    // Auto-scroll to output for better UX
+    document.getElementById('outputLyrics').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
-async function copyToClipboard() {
-    const outputTextarea = document.getElementById('outputLyrics');
+function copyToClipboard() {
+    const outputField = document.getElementById('outputLyrics');
+    if (!outputField.value) return;
 
-    // 1. Select the text visually (Fixed the typo here)
-    outputTextarea.select(); 
-    outputTextarea.setSelectionRange(0, outputTextarea.value.length);
+    outputField.select();
+    outputField.setSelectionRange(0, 99999); // For mobile devices
 
-    // 2. Use the Clipboard API to copy the text
     try {
-        await navigator.clipboard.writeText(outputTextarea.value);
-        alert('Lyrics copied to clipboard! Ready for EasyWorship.');
+        navigator.clipboard.writeText(outputField.value).then(() => {
+            const copyBtn = document.querySelector('.btn-secondary');
+            const originalText = copyBtn.innerText;
+            
+            // Visual feedback for success
+            copyBtn.innerText = 'Copied!';
+            copyBtn.style.color = '#4ade80';
+            
+            setTimeout(() => {
+                copyBtn.innerText = originalText;
+                copyBtn.style.color = 'inherit'; // Changed from var(--text-secondary) as it might not be defined yet
+            }, 2000);
+        });
     } catch (err) {
-        // Fallback for older browsers
-        document.execCommand('copy');
-        alert('Lyrics copied!');
+        console.error('Failed to copy: ', err);
     }
-}
+}
