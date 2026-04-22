@@ -24,6 +24,8 @@ body {
     overflow-x: hidden;
     overflow-y: auto;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* --- Neon Wave Animation --- */
@@ -197,6 +199,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 30px;
+    flex: 1;
     transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
@@ -483,6 +486,7 @@ button {
     max-width: 1200px;
     margin: 0 auto;
     width: 100%;
+    flex: 1;
 }
 
 .view-section {
