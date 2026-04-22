@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Citam Rongai</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --glass-bg: rgba(10, 10, 10, 0.7);
+            --glass-border: rgba(255, 0, 60, 0.2);
+        }
+
+        body.login-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background: #050505;
+        }
+
+        .login-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 50px rgba(255, 0, 60, 0.1);
+            position: relative;
+            z-index: 10;
+            animation: cardAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes cardAppear {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-red);
+            font-size: 1.8rem;
+            margin: 0;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(255, 0, 60, 0.4);
+        }
+
+        .login-header p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--neon-red);
+            background: rgba(255, 0, 60, 0.05);
+            box-shadow: 0 0 15px rgba(255, 0, 60, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--neon-red);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background: #ff1a4d;
+            box-shadow: 0 0 20px rgba(255, 0, 60, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: #ff4d4d;
+            font-size: 0.85rem;
+            text-align: center;
+            margin-top: 15px;
+            min-height: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .error-message.visible {
+            opacity: 1;
+        }
+
+        .login-footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #444;
+        }
+
+        .login-footer a {
+            color: #666;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body class="login-page">
+    <div class="bg-animation">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+
+    <div class="login-card">
+        <div class="login-header">
+            <h1>CITAM RONGAI</h1>
+            <p>Admin Portal Operations</p>
+        </div>
+        
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Admin Email</label>
+                <input type="email" id="email" placeholder="admin@citamrongai.org" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+            
+            <button type="submit" class="login-btn">Secure Login</button>
+            <div id="error-msg" class="error-message">Invalid credentials. Access Denied.</div>
+        </form>
+
+        <div class="login-footer">
+            &copy; 2026 Citam Rongai Media Team<br>
+            <a href="index.html">Back to Formatter</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth } from './firebase-config.js';
+        import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+
+        const loginForm = document.getElementById('login-form');
+        const errorMsg = document.getElementById('error-msg');
+
+        // Redirect if already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = 'dashboard.html';
+            }
+        });
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const btn = loginForm.querySelector('button');
+
+            btn.disabled = true;
+            btn.innerText = 'Verifying...';
+            errorMsg.classList.remove('visible');
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error(error);
+                errorMsg.innerText = "Access Denied: " + error.code.split('/')[1].replace(/-/g, ' ');
+                errorMsg.classList.add('visible');
+                btn.disabled = false;
+                btn.innerText = 'Secure Login';
+            }
+        });
+    </script>
+</body>
+</html>

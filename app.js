@@ -1,3 +1,7 @@
+import { db, rtdb, auth } from './firebase-config.js';
+import { ref, set, onValue } from "firebase/database";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+
 // In-Memory Data Store (Simulating a backend DB)
 let store = {
     services: [],
@@ -7,28 +11,70 @@ let store = {
 
 const STORAGE_KEY = 'citam_rongai_store_v1';
 
-function saveStore() {
+function saveGranular(path, data) {
     try {
+        const dataRef = ref(rtdb, path);
+        set(dataRef, data).catch(err => console.error(`Firebase Sync Error [${path}]`, err));
+        
+        // Update local store as well
+        const segments = path.split('/');
+        if (segments.length === 1) {
+            store[segments[0]] = data;
+        }
         localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
     } catch (e) {
-        console.error("Failed to save to localStorage", e);
+        console.error("Failed to save granularly", e);
     }
 }
 
 function loadStore() {
     try {
+        // Load initial from localStorage for speed
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
             store = JSON.parse(saved);
         }
+        
+        // Set up granular listeners
+        const paths = ['services', 'blackoutDates', 'volunteers'];
+        paths.forEach(path => {
+            const dataRef = ref(rtdb, path);
+            onValue(dataRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    store[path] = data;
+                    // Trigger UI updates
+                    requestAnimationFrame(() => refreshActiveView());
+                }
+            });
+        });
     } catch (e) {
-        console.error("Failed to load from localStorage", e);
+        console.error("Failed to load store", e);
     }
 }
 
+function refreshActiveView() {
+    const activeNav = document.querySelector('.nav-item.active');
+    if (activeNav) {
+        const targetId = activeNav.getAttribute('data-target');
+        if(targetId === 'dashboard-view') renderDashboard();
+        if(targetId === 'services-view') renderServices();
+        if(targetId === 'people-view') renderPeople();
+    }
+    renderDashboard(); // Always update dashboard for counts/status
+    populateServiceDropdown();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Load persisted data
-    loadStore();
+    // Auth Guard: Only allow logged-in admins
+    onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            window.location.href = 'login.html';
+            return;
+        }
+        // Load persisted data after auth confirmed
+        loadStore();
+    });
 
     // Skeleton reveal — short strict delay then fade out
     const skeleton = document.getElementById('skeleton-screen');
@@ -140,11 +186,13 @@ function openItemsModal(serviceId) {
 // Handlers
 function handleBlackoutSubmit(e) {
     e.preventDefault();
+    const name = document.getElementById('blackout-name').value;
     const date = document.getElementById('blackout-date').value;
     const reason = document.getElementById('blackout-reason').value;
     
-    store.blackoutDates.push({ date, reason });
-    saveStore();
+    if (!store.blackoutDates) store.blackoutDates = [];
+    store.blackoutDates.push({ name, date, reason });
+    saveGranular('blackoutDates', store.blackoutDates);
     e.target.reset();
     renderDashboard();
 }
@@ -171,7 +219,7 @@ function handleCreateService(e) {
         store.services.push(newService);
     }
     
-    saveStore();
+    saveGranular('services', store.services);
     closeModal('service-modal');
     e.target.reset();
     delete e.target.dataset.editId;
@@ -198,7 +246,7 @@ function handleAddItem(e) {
         } else {
             service.items.push(itemObj);
         }
-        saveStore();
+        saveGranular('services', store.services);
         e.target.reset();
         renderServiceItems(service);
         renderServices(); // update counts on cards
@@ -215,7 +263,7 @@ function handleAssignPerson(e) {
     const serviceDisplay = service ? `${service.theme} (${service.date})` : 'General';
 
     store.volunteers.push({ name, role, serviceId, serviceDisplay });
-    saveStore();
+    saveGranular('volunteers', store.volunteers);
     closeModal('person-modal');
     e.target.reset();
     renderPeople();
@@ -247,7 +295,7 @@ function renderDashboard() {
         li.style.justifyContent = 'space-between';
         li.style.alignItems = 'center';
         li.innerHTML = `
-            <span><strong>${b.date}</strong> <span style="color:var(--neon-red)">Unavailable</span> - ${b.reason || 'No reason provided'}</span>
+            <span><strong>${b.name || 'Anonymous'}</strong> - ${b.date} <span style="color:var(--neon-red)">Unavailable</span> - ${b.reason || 'No reason'}</span>
             <button class="btn-del icon-btn" onclick="deleteBlackout(${index})">X</button>
         `;
         blackoutList.appendChild(li);
@@ -366,16 +414,15 @@ function populateServiceDropdown() {
 window.deleteService = function(id) {
     store.services = store.services.filter(s => s.id !== id);
     store.volunteers = store.volunteers.filter(v => v.serviceId != id);
-    saveStore();
+    saveGranular('services', store.services);
+    saveGranular('volunteers', store.volunteers);
     renderServices();
-    renderDashboard();
-    populateServiceDropdown();
-    renderPeople();
+    // ...
 };
 
 window.deleteBlackout = function(index) {
     store.blackoutDates.splice(index, 1);
-    saveStore();
+    saveGranular('blackoutDates', store.blackoutDates);
     renderDashboard();
 };
 
@@ -383,7 +430,7 @@ window.deleteServiceItem = function(serviceId, itemIndex) {
     const service = store.services.find(s => s.id == serviceId);
     if(service) {
         service.items.splice(itemIndex, 1);
-        saveStore();
+        saveGranular('services', store.services);
         renderServiceItems(service);
         renderServices();
     }
@@ -391,7 +438,7 @@ window.deleteServiceItem = function(serviceId, itemIndex) {
 
 window.deleteVolunteer = function(index) {
     store.volunteers.splice(index, 1);
-    saveStore();
+    saveGranular('volunteers', store.volunteers);
     renderPeople();
 };
 
@@ -429,4 +476,12 @@ window.copyLyrics = function(serviceId, itemIndex, btn) {
             });
         }
     }
+};
+
+window.logout = function() {
+    signOut(auth).then(() => {
+        window.location.href = 'login.html';
+    }).catch((error) => {
+        console.error("Logout Error", error);
+    });
 };
