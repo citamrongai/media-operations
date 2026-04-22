@@ -11,6 +11,7 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Orbitron:wght@400;700&family=Poppins:wght@700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body class="spa-layout">
@@ -91,10 +92,26 @@
                 <button class="btn-primary sm-btn" onclick="openServiceModal()">+ Create Service</button>
             </div>
 
-            <div id="services-container" class="grid-container mt-20">
-                <!-- Services Cards Populated by JS -->
-                <div class="empty-state">No services created yet. Create one to get started.</div>
+            <div class="controls">
+                <button onclick="FormatLyrics()" class="btn-primary">
+                    <span class="btn-text">Format for EasyWorship</span>
+                    <span class="btn-glow"></span>
+                </button>
+                <button onclick="copyToClipboard()" class="btn-secondary">
+                    <span class="btn-text">Copy Results</span>
+                </button>
+                <button onclick="shareToWhatsApp()" class="btn-whatsapp">
+                    <i class="fab fa-whatsapp"></i>
+                    <span class="btn-text">Share to WhatsApp</span>
+                </button>
             </div>
+
+            <div id="warningBanner" style="display:none; color:#ff003c; font-weight:bold; margin-top:10px;">
+                ⚠️ Your lyrics exceed WhatsApp's 65,000 character limit. Please shorten them.
+                <div id="services-container" class="grid-container mt-20">
+                    <!-- Services Cards Populated by JS -->
+                    <div class="empty-state">No services created yet. Create one to get started.</div>
+                </div>
         </section>
 
         <!-- People View -->
@@ -109,8 +126,18 @@
                 <!-- Assignments Populated by JS -->
                 <div class="empty-state">No volunteers assigned.</div>
             </div>
+
         </section>
 
+        <div class="output-group">
+            <label for="outputLyrics">Formatted Slides</label>
+            <textarea id="outputLyrics" readonly placeholder="Formatted slides will appear here..."></textarea>
+            <div id="charCounter" style="margin-top:8px; font-size:0.9rem; color:#b3b3b3;">
+                Characters: 0 / 65,000
+            </div>
+
+        </div>
+        </div>
     </main>
 
     <!-- Modals -->

@@ -24,8 +24,6 @@ body {
     overflow-x: hidden;
     overflow-y: auto;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
 }
 
 /* --- Neon Wave Animation --- */
@@ -86,8 +84,10 @@ body {
 /* --- Skeleton UI --- */
 .skeleton-overlay {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: var(--bg-color);
     z-index: 9999;
     display: flex;
@@ -104,33 +104,61 @@ body {
 }
 
 .skeleton-header {
-    width: 100%; max-width: 500px;
-    display: flex; flex-direction: column;
-    align-items: center; gap: 12px;
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
 }
 
 .skeleton-title {
-    width: 55%; height: 40px;
+    width: 55%;
+    height: 40px;
     background: var(--skeleton-color);
     border-radius: 8px;
 }
 
 .skeleton-subtitle {
-    width: 28%; height: 18px;
+    width: 28%;
+    height: 18px;
     background: var(--skeleton-color);
     border-radius: 4px;
 }
 
 .skeleton-body {
-    width: 100%; max-width: 960px;
-    display: flex; flex-direction: column; gap: 18px;
+    width: 100%;
+    max-width: 960px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
-.skeleton-card { height: 90px; }
-.skeleton-label { width: 15%; height: 14px; border-radius: 4px; }
-.skeleton-textarea { height: 180px; }
-.skeleton-controls { height: 55px; border-radius: 12px; }
-.skeleton-footer-placeholder { height: 36px; width: 65%; align-self: center; margin-top: 16px; }
+.skeleton-card {
+    height: 90px;
+}
+
+.skeleton-label {
+    width: 15%;
+    height: 14px;
+    border-radius: 4px;
+}
+
+.skeleton-textarea {
+    height: 180px;
+}
+
+.skeleton-controls {
+    height: 55px;
+    border-radius: 12px;
+}
+
+.skeleton-footer-placeholder {
+    height: 36px;
+    width: 65%;
+    align-self: center;
+    margin-top: 16px;
+}
 
 .skeleton-card,
 .skeleton-label,
@@ -144,29 +172,31 @@ body {
 
 .shimmer {
     background: linear-gradient(90deg,
-        var(--skeleton-color) 0%,
-        #1e1e1e 50%,
-        var(--skeleton-color) 100%);
+            var(--skeleton-color) 0%,
+            #1e1e1e 50%,
+            var(--skeleton-color) 100%);
     background-size: 200% 100%;
     animation: shimmer 1.4s infinite linear;
 }
 
 @keyframes shimmer {
-    0%   { background-position: -200% 0; }
-    100% { background-position:  200% 0; }
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
 }
 
 
-/* --- Layout --- */
 .main-content {
     max-width: 900px;
     margin: 0 auto;
-    width: 100%;
     padding: 40px 20px;
     display: flex;
     flex-direction: column;
     gap: 30px;
-    flex: 1;
     transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
@@ -312,32 +342,29 @@ button {
     border-color: var(--neon-red);
 }
 
-.btn-copy {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 5px 12px !important;
-    font-size: 0.72rem;
-    font-family: var(--font-heading);
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    background: rgba(255, 0, 60, 0.06);
-    color: var(--text-secondary);
-    border: 1px solid rgba(255, 0, 60, 0.25) !important;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    backdrop-filter: blur(6px);
-    text-transform: uppercase;
-    white-space: nowrap;
+/* --- WhatsApp Button --- */
+.btn-whatsapp {
+    background: #25D366;
+    color: white;
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.5);
 }
 
-.btn-copy:hover {
-    background: rgba(255, 0, 60, 0.15);
-    color: white;
-    border-color: var(--neon-red) !important;
-    box-shadow: 0 0 10px rgba(255, 0, 60, 0.3);
-    transform: translateY(-1px);
+.btn-whatsapp:hover {
+    background: #1ebe5d;
+}
+
+.btn-whatsapp i {
+    margin-right: 8px;
+    font-size: 1.2rem;
+}
+
+/* --- Warning -- */
+#warningBanner {
+    background: rgba(255, 0, 60, 0.1);
+    border: 1px solid #ff003c;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
 }
 
 /* --- Footers --- */
@@ -371,7 +398,6 @@ button {
 .spa-layout {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
 }
 
 .spa-nav {
@@ -457,7 +483,6 @@ button {
     max-width: 1200px;
     margin: 0 auto;
     width: 100%;
-    flex: 1;
 }
 
 .view-section {
@@ -676,7 +701,9 @@ button {
         gap: 15px;
     }
 
-    .nav-brand, .nav-links, .clock-container {
+    .nav-brand,
+    .nav-links,
+    .clock-container {
         flex: none;
         width: 100%;
         align-items: center;
